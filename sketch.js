@@ -7,16 +7,16 @@ function preload(){
 }
 
 function setup() {
-  createCanvas(5906, 2067);
+  createCanvas(screeenWidth, screenHeight);
 }
 
 function draw() {
   background("#fff");
-  image(bg, windowWidth/2, windowHeight/2);
+  image(bg, 0, 0, screenWidth, screenHeight/2.86);
   
   if(toggle){
-    image(textOverlay1, windowWidth/2, windowHeight/2);
-  }else image(textOverlay2, windowWidth/2, windowHeight/2);
+    image(textOverlay1, 0, 0, screenWidth, screenHeight/2.86);
+  }else image(textOverlay2, 0, 0, screenWidth, screenHeight/2.86);
   
   
 }
