@@ -6,6 +6,8 @@ var imageToDisplay = 0;
 let lastChangeTime = 0;
 const changeInterval = 5000;
 
+var imageHeight;
+
 function preload(){
   bg = loadImage('/assets/illustration.PNG');
   textOverlay1 = loadImage('/assets/textOverlay-01.PNG')
@@ -25,18 +27,23 @@ function preload(){
 }
 
 function setup() {
+  
   createCanvas(windowWidth, windowHeight);
+  background("#2d2d2d");
+  imageHeight = windowHeight/2.3
 }
 
 function draw() {
-  background("#fff");
-  image(bg, 0, 0, windowWidth, windowHeight/2.3);
-  
-  
+ 
 
+  translate(windowWidth/2, windowHeight/2);
+
+  image(bg, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
+  
+  
   if(toggle){
-    image(textOverlay1, 0, 0, windowWidth, windowHeight/2.3);
-  }else image(textOverlay2, 0, 0, windowWidth, windowHeight/2.3);
+    image(textOverlay1, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
+  }else image(textOverlay2, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
 
 
   if (millis() - lastChangeTime > changeInterval) {
@@ -47,7 +54,7 @@ function draw() {
   }
 
   tint(255, 200);
-  image(lightOverlays[imageToDisplay], 0, 0, windowWidth, windowHeight/2.3)
+  image(lightOverlays[imageToDisplay], -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight)
   
 }
 function keyPressed(e){
