@@ -1,10 +1,12 @@
-var toggle = true;
+var toggle = false;
+var mode = "display"
+const darkOverlays = [];
 
-var lightOverlays = [];
 var imageToDisplay = 0;
-
-let lastChangeTime = 0;
+var lastChangeTime = 0;
 const changeInterval = 5000;
+var overlayInterval = 0
+
 
 var imageHeight;
 
@@ -14,50 +16,122 @@ function preload(){
   textOverlay2 = loadImage('/assets/textOverlay-02.PNG')
 
   // overlays
-  lightOverlays.push(loadImage("assets/overlay/alexa-dark.png"))
-  lightOverlays.push(loadImage("assets/overlay/abu-dark.png"))
-  lightOverlays.push(loadImage("assets/overlay/frank-dark.png"))
-  lightOverlays.push(loadImage("assets/overlay/larena-dark.png"))
-  lightOverlays.push(loadImage("assets/overlay/moo-dark.png"))
-  lightOverlays.push(loadImage("assets/overlay/reya-dark.png"))
-  lightOverlays.push(loadImage("assets/overlay/rosie-dark.png"))
-  lightOverlays.push(loadImage("assets/overlay/sity-dark.png"))
-  lightOverlays.push(loadImage("assets/overlay/strawberryMan-dark.png"))
-  lightOverlays.push(loadImage("assets/overlay/xiaoming-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/alexa-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/abu-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/frank-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/larena-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/moo-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/reya-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/rosie-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/sity-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/strawberryMan-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/xiaoming-dark.png"))
+
 }
 
 function setup() {
   
   createCanvas(windowWidth, windowHeight);
-  background("#2d2d2d");
-  imageHeight = windowHeight/2.3
+  imageHeight = windowWidth / (5906/2067)
 }
 
 function draw() {
  
 
   translate(windowWidth/2, windowHeight/2);
-
-  image(bg, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
+  switch(mode){
+    case "display":
+      displayMode()
+      break;
+    case "presentation":
+      presentation()
+      break;
+  }
   
+  
+}
+
+function timer(){
+  if (millis() - lastChangeTime > changeInterval) {
+    
+    
+    toggle = (!toggle) //text
+    overlayInterval+=1 //overlay
+
+    if(overlayInterval >= 2) {
+      imageToDisplay+=1 
+      overlayInterval = 0
+    }
+    if (imageToDisplay >= darkOverlays.length) imageToDisplay = 0
+
+    lastChangeTime = millis(); // Reset the timer
+  }
+
+}
+
+function displayMode(){
+  background("#141414");
+  tint(255, 255);
+  image(bg, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
   
   if(toggle){
     image(textOverlay1, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
   }else image(textOverlay2, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
 
+  timer()
 
-  if (millis() - lastChangeTime > changeInterval) {
-    imageToDisplay+=1 
-    if (imageToDisplay >= lightOverlays.length) imageToDisplay = 0
-
-    lastChangeTime = millis(); // Reset the timer
-  }
-
-  tint(255, 200);
-  image(lightOverlays[imageToDisplay], -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight)
-  
+  tint(255, 235);
+  image(darkOverlays[imageToDisplay], -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight)
 }
+
+
+
+function presentation() {
+  background("#000");
+
+  
+  fill("#fff")
+  rect(-windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight)
+
+  tint(255, 255);
+
+  if(toggle){
+    image(textOverlay1, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
+  }else image(textOverlay2, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
+
+  timer()
+
+  image(darkOverlays[imageToDisplay], -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight)
+  if(toggle){
+    image(textOverlay1, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
+  }else image(textOverlay2, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
+}
+
+
 function keyPressed(e){
   console.log(mouseX, mouseY)
-  toggle = (!toggle)
+  switch(keyCode){
+    case BACKSPACE:
+      location.reload();
+      break;
+
+    case 80 || 112:
+      mode = "presentation";
+      break;
+
+    case 68 || 100:
+      mode = "display";
+      break;
+
+    default:
+      toggle = (!toggle)
+      lastChangeTime = millis(); // Reset the timer
+      break;
+
+  }
+
+}
+
+function windowResized(){
+  resizeCanvas(windowWidth, windowHeight)
 }
