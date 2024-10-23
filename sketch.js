@@ -1,4 +1,4 @@
-var toggle = false;
+var toggle = true;
 var mode = "display"
 const darkOverlays = [];
 
@@ -46,8 +46,13 @@ function draw() {
     case "presentation":
       presentation()
       break;
+    case "noHighLights":
+      noHighlights()
+      break;
+
+
   }
-  
+
   
 }
 
@@ -72,16 +77,16 @@ function timer(){
 function displayMode(){
   background("#141414");
   tint(255, 255);
-  image(bg, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
+  image(bg, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
   
   if(toggle){
-    image(textOverlay1, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
-  }else image(textOverlay2, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
+    image(textOverlay1, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
+  }else image(textOverlay2, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
 
   timer()
 
   tint(255, 235);
-  image(darkOverlays[imageToDisplay], -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight)
+  image(darkOverlays[imageToDisplay], -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight)
 }
 
 
@@ -91,20 +96,41 @@ function presentation() {
 
   
   fill("#fff")
-  rect(-windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight)
+  rect(-windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight)
 
   tint(255, 255);
 
+  // timer()
   if(toggle){
-    image(textOverlay1, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
-  }else image(textOverlay2, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
+    image(textOverlay1, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
+  }else image(textOverlay2, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
 
   timer()
 
-  image(darkOverlays[imageToDisplay], -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight)
+  tint(255, 235);
+  image(darkOverlays[imageToDisplay], -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight)
+}
+
+
+function noHighlights() {
+  background("#fff");
+
+  
+  // fill("#fff")
+  // // rect(-windowWidth/2, imageHeight*-1, windowWidth, imageHeight)
+
+  // tint(255, 255);
+
   if(toggle){
-    image(textOverlay1, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
-  }else image(textOverlay2, -windowWidth/2, imageHeight/2*-1, windowWidth, imageHeight);
+    image(textOverlay1, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
+  }else image(textOverlay2, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
+
+  timer()
+
+  // image(darkOverlays[imageToDisplay], -windowWidth/2, imageHeight*-1, windowWidth, imageHeight)
+  // if(toggle){
+  //   image(textOverlay1, -windowWidth/2, imageHeight*-1, windowWidth, imageHeight);
+  // }else image(textOverlay2, -windowWidth/2, imageHeight*-1, windowWidth, imageHeight);
 }
 
 
@@ -123,6 +149,10 @@ function keyPressed(e){
       mode = "display";
       break;
 
+    case 78 ||110:
+      mode = "noHighLights";
+      break;
+  
     default:
       toggle = (!toggle)
       lastChangeTime = millis(); // Reset the timer
