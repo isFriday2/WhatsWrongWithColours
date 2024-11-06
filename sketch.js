@@ -1,5 +1,5 @@
 var toggle = true;
-var mode = "display"
+var mode = "adjust"
 const darkOverlays = [];
 
 var imageToDisplay = 0;
@@ -7,8 +7,11 @@ var lastChangeTime = 0;
 const changeInterval = 5000;
 var overlayInterval = 0
 
+var globeX;
+var globeY;
+var globeWidth;
+var globeHeight;
 
-var imageHeight;
 
 function preload(){
   bg = loadImage('/assets/illustration.PNG');
@@ -28,17 +31,25 @@ function preload(){
   darkOverlays.push(loadImage("assets/overlay/xiaoming-dark.png"))
 
 }
-
+function ratio(width){
+  return width / (5906/2067)
+}
 function setup() {
   
   createCanvas(windowWidth, windowHeight);
-  imageHeight = windowWidth / (5906/2067)
+  var imageHeight = ratio(windowWidth)
+  // globeX = -windowWidth/2;
+  // globeY = imageHeight*-1/2;
+  globeX = 0;
+  globeY = imageHeight/2
+  globeWidth =  windowWidth 
+  globeHeight = imageHeight
+
+  console.log("Default:", globeX,globeY)
 }
 
 function draw() {
  
-
-  translate(windowWidth/2, windowHeight/2);
   switch(mode){
     case "display":
       displayMode()
@@ -49,7 +60,9 @@ function draw() {
     case "noHighLights":
       noHighlights()
       break;
-
+    case "adjust":
+      Adjust()
+      break;
 
   }
 
@@ -77,16 +90,16 @@ function timer(){
 function displayMode(){
   background("#141414");
   tint(255, 255);
-  image(bg, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
+  image(bg, globeX, globeY, globeWidth, globeHeight);
   
   if(toggle){
-    image(textOverlay1, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
-  }else image(textOverlay2, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
+    image(textOverlay1, globeX, globeY, globeWidth, globeHeight);
+  }else image(textOverlay2, globeX, globeY, globeWidth, globeHeight);
 
   timer()
 
   tint(255, 235);
-  image(darkOverlays[imageToDisplay], -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight)
+  image(darkOverlays[imageToDisplay], globeX, globeY, globeWidth, globeHeight)
 }
 
 
@@ -96,19 +109,19 @@ function presentation() {
 
   
   fill("#fff")
-  rect(-windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight)
+  rect(globeX, globeY, globeWidth, globeHeight)
 
   tint(255, 255);
 
   // timer()
   if(toggle){
-    image(textOverlay1, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
-  }else image(textOverlay2, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
+    image(textOverlay1, globeX, globeY, globeWidth, globeHeight);
+  }else image(textOverlay2, globeX, globeY, globeWidth, globeHeight);
 
   timer()
 
   tint(255, 235);
-  image(darkOverlays[imageToDisplay], -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight)
+  image(darkOverlays[imageToDisplay], globeX, globeY, globeWidth, globeHeight)
 }
 
 
@@ -122,8 +135,8 @@ function noHighlights() {
   // tint(255, 255);
 
   if(toggle){
-    image(textOverlay1, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
-  }else image(textOverlay2, -windowWidth/2, imageHeight*-1/2, windowWidth, imageHeight);
+    image(textOverlay1, globeX, globeY, globeWidth, globeHeight);
+  }else image(textOverlay2, globeX, globeY, globeWidth, globeHeight);
 
   timer()
 
@@ -133,9 +146,20 @@ function noHighlights() {
   // }else image(textOverlay2, -windowWidth/2, imageHeight*-1, windowWidth, imageHeight);
 }
 
+function Adjust(){
+  console.log("Adjust Mode")
+  background("#fff");
+  fill("green")
+  rect(globeX, globeY, globeWidth, globeHeight)
+  image(textOverlay1, globeX, globeY, globeWidth, globeHeight);
+
+  fill("red")
+  circle(globeX + globeWidth/2, globeY + globeHeight/2, 20)
+}
+
 
 function keyPressed(e){
-  console.log(mouseX, mouseY)
+  console.log("KeyPressed:", keyCode)
   switch(keyCode){
     case BACKSPACE:
       location.reload();
@@ -152,14 +176,45 @@ function keyPressed(e){
     case 78 ||110:
       mode = "noHighLights";
       break;
+
+    case 49:
+      mode = "adjust";
+      break;
+
+    case 187:
+      console.log("HERE")
+      if(mode === "adjust") {
+        globeWidth +=10
+        globeHeight = ratio(globeWidth)
+      }
+      console.log("PLUS:", globeWidth,globeHeight)
+      break;
+
+    case 189:
+      if(mode === "adjust") {
+        globeWidth -=10
+        globeHeight = ratio(globeWidth)
+      }
+
+      console.log("MINUS:", globeWidth,globeHeight)
+      break;
   
     default:
       toggle = (!toggle)
       lastChangeTime = millis(); // Reset the timer
       break;
 
+
   }
 
+}
+function mousePressed(){
+  if(mode == "adjust"){
+    globeX = mouseX;
+    globeY = mouseY;
+
+    console.log("Mouse:", mouseX, mouseY)
+  }
 }
 
 function windowResized(){
