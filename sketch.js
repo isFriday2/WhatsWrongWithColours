@@ -37,16 +37,58 @@ function ratio(width){
 function setup() {
   
   createCanvas(windowWidth, windowHeight);
-  var imageHeight = ratio(windowWidth)
+
+  loadGlobeSettings();
   // globeX = -windowWidth/2;
   // globeY = imageHeight*-1/2;
-  globeX = 0;
-  globeY = imageHeight/2
-  globeWidth =  windowWidth 
-  globeHeight = imageHeight
-
-  console.log("Default:", globeX,globeY)
 }
+
+
+function loadGlobeSettings() {
+  // Get the stored settings
+  let storedSettings = localStorage.getItem('p5JSglobeSettings');
+  
+  if (storedSettings) {
+    // Parse the JSON string back to an object
+    let size = JSON.parse(storedSettings);
+    
+    // Update the global variables
+    globeX = size.x;
+    globeY = size.y;
+    globeWidth = size.w;
+    globeHeight = size.h;
+    
+    console.log('Settings loaded:', size);
+  } else {
+    console.log('No saved settings found');
+    
+    var imageHeight = ratio(windowWidth)
+    globeX = 0;
+    globeY = imageHeight/2
+    globeWidth =  windowWidth 
+    globeHeight = imageHeight
+  
+    console.log("Default:", globeX, globeY, globeWidth, globeHeight)
+  }
+}
+
+function saveGlobeSettings() {
+  // Create the size object
+  let size = {
+    x: globeX,
+    y: globeY,
+    w: globeWidth,
+    h: globeHeight
+  };
+  
+  // Save to localStorage
+  // Note: localStorage only stores strings, so we need to convert object to JSON
+  console.log(`${globeX}, ${globeY}, ${globeWidth}, ${globeHeight}`)
+  localStorage.setItem('p5JSglobeSettings', JSON.stringify(size));
+  console.log('Settings saved!');
+}
+
+
 
 function draw() {
  
@@ -128,22 +170,11 @@ function presentation() {
 function noHighlights() {
   background("#fff");
 
-  
-  // fill("#fff")
-  // // rect(-windowWidth/2, imageHeight*-1, windowWidth, imageHeight)
-
-  // tint(255, 255);
-
   if(toggle){
     image(textOverlay1, globeX, globeY, globeWidth, globeHeight);
   }else image(textOverlay2, globeX, globeY, globeWidth, globeHeight);
 
   timer()
-
-  // image(darkOverlays[imageToDisplay], -windowWidth/2, imageHeight*-1, windowWidth, imageHeight)
-  // if(toggle){
-  //   image(textOverlay1, -windowWidth/2, imageHeight*-1, windowWidth, imageHeight);
-  // }else image(textOverlay2, -windowWidth/2, imageHeight*-1, windowWidth, imageHeight);
 }
 
 function Adjust(){
@@ -151,11 +182,14 @@ function Adjust(){
   background("#fff");
   fill("green")
   rect(globeX, globeY, globeWidth, globeHeight)
-  image(textOverlay1, globeX, globeY, globeWidth, globeHeight);
+  if(toggle){
+    image(textOverlay1, globeX, globeY, globeWidth, globeHeight);
+  }else image(textOverlay2, globeX, globeY, globeWidth, globeHeight);
 
   fill("red")
   circle(globeX + globeWidth/2, globeY + globeHeight/2, 20)
 }
+
 
 
 function keyPressed(e){
@@ -198,7 +232,54 @@ function keyPressed(e){
 
       console.log("MINUS:", globeWidth,globeHeight)
       break;
-  
+    
+    case 37:
+      //left
+      if(mode === "adjust") {
+        if(keyIsDown(82)) {
+          globeWidth -= 5
+        }else globeX -=5
+      }
+      break;
+    
+    case 39:
+      //right
+      if(mode === "adjust") {
+        if(keyIsDown(82)) {
+          globeWidth += 5
+        }else globeX +=5
+      }
+      break;
+    
+    case 38:
+      //up
+      if(mode === "adjust") {
+
+        if(keyIsDown(82)) {
+          globeHeight -= 5
+        }else globeY -=5
+      }
+      break;
+    
+    case 40:
+      //down
+      if(mode === "adjust") {
+        if(keyIsDown(82)) {
+          globeHeight += 5
+        }else globeY +=5
+      }
+      break;
+    
+    case 13:
+      saveGlobeSettings()
+      break;
+
+    case 221:
+      if(keyIsDown(219))
+      console.log("reset")
+      localStorage.removeItem('p5JSglobeSettings');
+      break;
+
     default:
       toggle = (!toggle)
       lastChangeTime = millis(); // Reset the timer
@@ -209,6 +290,8 @@ function keyPressed(e){
 
 }
 function mousePressed(){
+
+  console.log("MousePressed:", mouseX, mouseY)
   if(mode == "adjust"){
     globeX = mouseX;
     globeY = mouseY;
