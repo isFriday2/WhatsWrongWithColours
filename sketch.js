@@ -1,6 +1,7 @@
 var toggle = true;
 var mode = "adjust"
 const darkOverlays = [];
+const circleOverlays = [];
 
 var imageToDisplay = 0;
 var lastChangeTime = 0;
@@ -12,25 +13,14 @@ var globeY;
 var globeWidth;
 var globeHeight;
 
-
 function preload(){
   bg = loadImage('/assets/illustration.PNG');
   textOverlay1 = loadImage('/assets/textOverlay-01.PNG')
   textOverlay2 = loadImage('/assets/textOverlay-02.PNG')
-
-  // overlays
-  darkOverlays.push(loadImage("assets/overlay/alexa-dark.png"))
-  darkOverlays.push(loadImage("assets/overlay/abu-dark.png"))
-  darkOverlays.push(loadImage("assets/overlay/frank-dark.png"))
-  darkOverlays.push(loadImage("assets/overlay/larena-dark.png"))
-  darkOverlays.push(loadImage("assets/overlay/moo-dark.png"))
-  darkOverlays.push(loadImage("assets/overlay/reya-dark.png"))
-  darkOverlays.push(loadImage("assets/overlay/rosie-dark.png"))
-  darkOverlays.push(loadImage("assets/overlay/sity-dark.png"))
-  darkOverlays.push(loadImage("assets/overlay/strawberryMan-dark.png"))
-  darkOverlays.push(loadImage("assets/overlay/xiaoming-dark.png"))
-
+  circleOverlays.push(circle(195,317))
 }
+
+
 function ratio(width){
   return width / (5906/2067)
 }
@@ -42,7 +32,6 @@ function setup() {
   // globeX = -windowWidth/2;
   // globeY = imageHeight*-1/2;
 }
-
 
 function loadGlobeSettings() {
   // Get the stored settings
@@ -88,8 +77,6 @@ function saveGlobeSettings() {
   console.log('Settings saved!');
 }
 
-
-
 function draw() {
  
   switch(mode){
@@ -105,6 +92,8 @@ function draw() {
     case "adjust":
       Adjust()
       break;
+    case "spotlight":
+      spotLightM()
 
   }
 
@@ -113,25 +102,42 @@ function draw() {
 
 function timer(){
   if (millis() - lastChangeTime > changeInterval) {
-    
-    
     toggle = (!toggle) //text
     overlayInterval+=1 //overlay
+    console.log("IMG", overlayInterval)
 
     if(overlayInterval >= 2) {
+      
       imageToDisplay+=1 
       overlayInterval = 0
     }
-    if (imageToDisplay >= darkOverlays.length) imageToDisplay = 0
+    if ((darkOverlays.length !== 0 && imageToDisplay >= darkOverlays.length) || (circleOverlays.length !== 0 && imageToDisplay >= circleOverlays.length)) imageToDisplay = 0
 
     lastChangeTime = millis(); // Reset the timer
   }
 
 }
+var loadedImages1 = false;
 
 function displayMode(){
   background("#141414");
   tint(255, 255);
+
+  if(!loadedImages1){
+      // overlays
+    darkOverlays.push(loadImage("assets/overlay/alexa-dark.png"))
+    darkOverlays.push(loadImage("assets/overlay/abu-dark.png"))
+    darkOverlays.push(loadImage("assets/overlay/frank-dark.png"))
+    darkOverlays.push(loadImage("assets/overlay/larena-dark.png"))
+    darkOverlays.push(loadImage("assets/overlay/moo-dark.png"))
+    darkOverlays.push(loadImage("assets/overlay/reya-dark.png"))
+    darkOverlays.push(loadImage("assets/overlay/rosie-dark.png"))
+    darkOverlays.push(loadImage("assets/overlay/sity-dark.png"))
+    darkOverlays.push(loadImage("assets/overlay/strawberryMan-dark.png"))
+    darkOverlays.push(loadImage("assets/overlay/xiaoming-dark.png"))
+    loadedImages1 = true;
+  }
+
   image(bg, globeX, globeY, globeWidth, globeHeight);
   
   if(toggle){
@@ -144,11 +150,23 @@ function displayMode(){
   image(darkOverlays[imageToDisplay], globeX, globeY, globeWidth, globeHeight)
 }
 
-
-
 function presentation() {
   background("#000");
 
+  if(!loadedImages1){
+    // overlays
+  darkOverlays.push(loadImage("assets/overlay/alexa-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/abu-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/frank-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/larena-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/moo-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/reya-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/rosie-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/sity-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/strawberryMan-dark.png"))
+  darkOverlays.push(loadImage("assets/overlay/xiaoming-dark.png"))
+  loadedImages1 = true;
+}
   
   fill("#fff")
   rect(globeX, globeY, globeWidth, globeHeight)
@@ -176,6 +194,31 @@ function noHighlights() {
 
   timer()
 }
+
+var loadImage2 = false;
+function spotLightM(){
+
+  background("#9c9c9c")
+  if(!loadImage2){
+    // overlays
+    for(var i=1; i<=10; i++){
+      circleOverlays.push(loadImage(`assets/circleOverlay/${i}.png`))
+    }
+    loadImage2 = true;
+  }
+
+  image(circleOverlays[imageToDisplay], globeX, globeY, globeWidth, globeHeight)
+
+  if(toggle){
+    image(textOverlay1, globeX, globeY, globeWidth, globeHeight);
+  }else image(textOverlay2, globeX, globeY, globeWidth, globeHeight);
+
+  timer()
+
+  
+}
+
+
 
 function Adjust(){
   console.log("Adjust Mode")
@@ -213,6 +256,10 @@ function keyPressed(e){
 
     case 49:
       mode = "adjust";
+      break;
+
+    case 83:
+      mode = "spotlight"
       break;
 
     case 187:
